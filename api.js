@@ -1,38 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import BurgerCard from './BurgerCard.jsx';
-import { obtenerHamburguesas } from './api';
+// URL del endpoint de hamburguesas proporcionado por la API REST
+const API_URL = "https://free-food-menus-api-two.vercel.app/burgers";
 
-export default function App() {
-  const [hamburguesas, setHamburguesas] = useState([]);
-  const [cargando, setCargando] = useState(true);
-
-  useEffect(() => {
-    async function cargarDatos() {
-      const datos = await obtenerHamburguesas();
-      setHamburguesas(datos);
-      setCargando(false);
-    }
-    cargarDatos();
-  }, []);
-
-  return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <Header />
-
-      {cargando ? (
-        <p style={{ textAlign: 'center', fontSize: '1.2rem' }}>Cargando hamburguesas de la API...</p>
-      ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: '20px'
-        }}>
-          {hamburguesas.map((hamburguesa) => (
-            <BurgerCard key={hamburguesa.id} burger={hamburguesa} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+// Función asíncrona exportable programada por Ashly para obtener los datos
+export async function obtenerHamburguesas() {
+  try {
+    // fetch realiza la petición HTTP GET al servidor remoto de la API
+    const respuesta = await fetch(API_URL);
+    
+    // .json() convierte la respuesta cruda del servidor en un objeto JSON manipulable por JS
+    const datos = await respuesta.json();
+    
+    // Retornamos la lista de hamburguesas obtenida
+    return datos;
+  } catch (error) {
+    // Capturamos cualquier error de conexión para que la app no falle
+    console.error("Error al consumir la API de hamburguesas:", error);
+    return [];
+  }
 }
